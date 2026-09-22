@@ -9,15 +9,22 @@ import { UploadCloudIcon, XIcon } from "./icons";
 import { PRODUCT_DOC_FILES, MockFile } from "@/lib/mockFiles";
 
 interface Props {
+  initialFiles?: MockFile[];
+  onFilesChange?: (files: MockFile[]) => void;
   onContinue: (docs: string[]) => void;
   onBack: () => void;
 }
 
-export default function UploadDocsStep({ onContinue, onBack }: Props) {
-  const [files, setFiles] = useState<MockFile[]>([]);
+export default function UploadDocsStep({ initialFiles = [], onFilesChange, onContinue, onBack }: Props) {
+  const [files, setFilesState] = useState<MockFile[]>(initialFiles);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const removeFile = (id: string) => setFiles((f) => f.filter((x) => x.id !== id));
+  const setFiles = (f: MockFile[]) => {
+    setFilesState(f);
+    onFilesChange?.(f);
+  };
+
+  const removeFile = (id: string) => setFiles(files.filter((x) => x.id !== id));
 
   return (
     <OnboardingLayout onBack={onBack}>
@@ -92,6 +99,7 @@ export default function UploadDocsStep({ onContinue, onBack }: Props) {
         <UploadModal
           title="Select product documentation"
           subtitle="Choose one or more files, or preview each before adding it."
+          acceptedFormats="PDF, DOCX, HTML, TXT"
           files={PRODUCT_DOC_FILES}
           mode="multi"
           initialSelected={files.map((f) => f.id)}

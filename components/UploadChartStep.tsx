@@ -9,12 +9,19 @@ import { UploadCloudIcon } from "./icons";
 import { CLAIM_CHART_FILES, MockFile } from "@/lib/mockFiles";
 
 interface Props {
+  initialFile?: MockFile | null;
+  onFileChange?: (file: MockFile | null) => void;
   onContinue: () => void;
 }
 
-export default function UploadChartStep({ onContinue }: Props) {
-  const [file, setFile] = useState<MockFile | null>(null);
+export default function UploadChartStep({ initialFile = null, onFileChange, onContinue }: Props) {
+  const [file, setFileState] = useState<MockFile | null>(initialFile);
   const [modalOpen, setModalOpen] = useState(false);
+
+  const setFile = (f: MockFile | null) => {
+    setFileState(f);
+    onFileChange?.(f);
+  };
 
   return (
     <OnboardingLayout>
@@ -71,6 +78,7 @@ export default function UploadChartStep({ onContinue }: Props) {
         <UploadModal
           title="Select a claim chart"
           subtitle="Pick a sample file, or preview it first to see what's inside."
+          acceptedFormats="CSV, XLSX, DOCX"
           files={CLAIM_CHART_FILES}
           mode="single"
           onClose={() => setModalOpen(false)}

@@ -17,63 +17,74 @@
 <body>
 
 <h1>Video Walkthrough Script</h1>
-<p class="meta">Target runtime: 2:45 (under 3 min limit)</p>
+<p class="meta">Target runtime: 2:50 (under 3 min limit) · updated for the 3-step onboarding + current workspace</p>
 
-<h2>Part 1 — User Flow <span class="timing">(60s)</span></h2>
+<h2>Part 1 — User Flow <span class="timing">(55s)</span></h2>
 <p><i>[Screen: user-flow.html open]</i></p>
 <div class="beat">
-<p class="quote">"This is iLumos — an AI chat interface for refining patent claim charts. The flow starts
-with the analyst uploading a claim chart and optional product docs, then setting system
-instructions that guide the AI's tone — for example, being conservative about legal claims.</p>
+<p class="quote">"This is iLumos — an AI chat interface for refining patent claim charts. Setup is three
+quick steps: upload the claim chart, optionally add reference docs the AI can cite as
+evidence, then set system instructions that guide its tone — for example, being
+conservative about legal claims.</p>
 <p class="quote">From there it's a loop: the analyst picks a claim element, asks the AI in chat to refine
 it — strengthen evidence, fix vague reasoning, whatever's needed — and the AI proposes a
 specific change. Nothing touches the chart until the analyst accepts, rejects, or modifies
 it. That loop repeats element by element until the chart's ready to export.</p>
-<p class="quote">I also built in three edge cases: if the AI cites the wrong evidence, the analyst corrects
-it right in chat. If the analyst disagrees with an accepted change, they can undo it. And
+<p class="quote">I also built in three required edge cases: if the AI cites the wrong evidence, the analyst
+corrects it right in chat. If they disagree with an accepted change, they can undo it. And
 if the AI genuinely can't find supporting evidence, instead of guessing, it asks the
-analyst to upload a document or paste a URL."</p>
+analyst to upload a document."</p>
 </div>
 
-<h2>Part 2 — Prototype Demo <span class="timing">(105s)</span></h2>
+<h2>Part 2 — Prototype Demo <span class="timing">(115s)</span></h2>
 <p><i>[Screen: localhost:3000, live]</i></p>
 
 <div class="beat">
-<span class="timing">15s — Setup</span>
-<p class="quote">"Here's the working prototype in Next.js. I upload the sample claim chart and the two
-reference docs, then set my system instructions — conservative on legal claims, prefer
+<span class="timing">25s — Setup</span>
+<p class="quote">"Here's the working prototype in Next.js. Step one, I browse the sample claim charts —
+I can preview a file before picking it, so I'm not uploading blind." <i>[preview, then select]</i>
+"Step two, product docs — same pattern, multi-select with preview, or skip it entirely."
+<i>[skip]</i> "Step three, system instructions — conservative on legal claims, prefer
 documentary over inferential evidence."</p>
 </div>
 
 <div class="beat">
-<span class="timing">25s — Weak evidence → can't find evidence edge case</span>
-<p class="quote">"I select element 3 — the ML algorithm claim, flagged weak — and ask the AI to strengthen
-the evidence. It checks the docs I've uploaded, can't find technical detail, and asks me
-for a whitepaper instead of making something up." <i>[click upload button]</i> "Now it comes
-back with a genuinely stronger, documented proposal."</p>
+<span class="timing">20s — Weak evidence → can't find evidence edge case</span>
+<p class="quote">"In the workspace, I select element 3 — the ML algorithm claim, flagged weak — and ask
+the AI to strengthen the evidence. It checks the docs I've uploaded, can't find technical
+detail, and asks me to browse for a whitepaper instead of making something up."
+<i>[browse, select]</i> "Now it comes back with a genuinely stronger, documented proposal."</p>
 </div>
 
 <div class="beat">
-<span class="timing">20s — Accept / modify</span>
+<span class="timing">15s — Accept / modify</span>
 <p class="quote">"I can accept this outright, or click Modify to hand-edit the wording before it commits."
 <i>[demonstrate Accept]</i> "The chart updates in place, and confidence flips to strong."</p>
 </div>
 
 <div class="beat">
-<span class="timing">20s — Correction edge case</span>
+<span class="timing">15s — Correction edge case</span>
 <p class="quote">"Now say the AI's evidence was just wrong — I tell it directly, in quotes, what the correct
 source text is, and it replaces the evidence immediately."</p>
 </div>
 
 <div class="beat">
-<span class="timing">15s — Undo</span>
+<span class="timing">10s — Undo</span>
 <p class="quote">"If I don't like a change, one click undoes it and the chat confirms exactly what was
 reverted — important since this feeds a legal filing."</p>
 </div>
 
 <div class="beat">
-<span class="timing">10s — Export</span>
-<p class="quote">"Once I'm happy with the chart, export to Word."</p>
+<span class="timing">15s — A few details worth noticing</span>
+<p class="quote">"Every element keeps its own separate conversation — switching rows never mixes up which
+element I'm talking about. I can upload more reference docs anytime from here, deselect an
+element, or start a completely fresh session." <i>[quick gesture to each]</i></p>
+</div>
+
+<div class="beat">
+<span class="timing">15s — Export</span>
+<p class="quote">"Once I'm happy with the chart, Export to Word — and this actually downloads a real,
+Word-openable file with the refined chart, not just a mock confirmation." <i>[show downloaded file]</i></p>
 </div>
 
 <h2>Closing <span class="timing">(10s)</span></h2>

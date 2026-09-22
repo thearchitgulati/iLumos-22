@@ -7,9 +7,14 @@ import FileTypeBadge from "./FileTypeBadge";
 interface Props {
   title: string;
   subtitle: string;
+  acceptedFormats: string;
   files: MockFile[];
   mode: "single" | "multi";
   initialSelected?: string[];
+  /** In multi mode, allow confirming with zero files selected (e.g. "remove all"). */
+  allowEmptyConfirm?: boolean;
+  /** Verb used on the multi-mode confirm button: "Add" when building a fresh selection, "Save" when editing an existing one. */
+  confirmVerb?: "Add" | "Save";
   onClose: () => void;
   onConfirm: (files: MockFile[]) => void;
 }
@@ -17,9 +22,12 @@ interface Props {
 export default function UploadModal({
   title,
   subtitle,
+  acceptedFormats,
   files,
   mode,
   initialSelected = [],
+  allowEmptyConfirm = false,
+  confirmVerb = "Add",
   onClose,
   onConfirm,
 }: Props) {
@@ -120,6 +128,7 @@ export default function UploadModal({
         >
           ⤴ Upload new from your Mac
         </button>
+        <p className="mt-2 text-center text-xs text-zinc-400">Supported formats: {acceptedFormats}</p>
 
         {showLocalNotice && (
           <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
@@ -144,13 +153,15 @@ export default function UploadModal({
               Cancel
             </button>
             <button
-              disabled={selected.length === 0}
+              disabled={selected.length === 0 && !allowEmptyConfirm}
               onClick={() => onConfirm(files.filter((f) => selected.includes(f.id)))}
               className="ilumos-btn-primary flex-1 rounded-full py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed"
             >
               {selected.length === 0
-                ? "Select a file to continue"
-                : `Add ${selected.length} selected file${selected.length === 1 ? "" : "s"}`}
+                ? allowEmptyConfirm
+                  ? "Save (no documents selected)"
+                  : "Select a file to continue"
+                : `${confirmVerb} ${selected.length} selected file${selected.length === 1 ? "" : "s"}`}
             </button>
           </div>
         )}

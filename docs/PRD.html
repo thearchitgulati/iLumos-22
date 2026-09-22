@@ -48,23 +48,24 @@ that will be used in legal proceedings.</p>
   <div>
     <b>In scope</b>
     <ul>
-      <li>Upload claim chart + optional reference docs</li>
-      <li>System instructions box, set once per session</li>
-      <li>Row-scoped chat refinement</li>
+      <li>3-step guided setup: upload claim chart → optional reference docs → system instructions, each with a file picker that supports preview-before-select</li>
+      <li>Proactive document management: add/remove reference docs anytime from the header, workspace, or chat composer, not just at setup</li>
+      <li>Row-scoped chat refinement, with each claim element keeping its own isolated conversation thread (switching elements never carries over another element's context)</li>
       <li>AI proposes a specific replacement for Evidence or Reasoning</li>
       <li>Accept / Reject / Modify gate on every proposal</li>
-      <li>Single-step undo per row</li>
+      <li>Full undo history per row (step back through successive accepted changes)</li>
+      <li>Deselect the active element and "New session" reset, both with explicit confirmation before discarding state</li>
       <li>Confidence flag (strong/moderate/weak), proactively cited by the AI</li>
       <li>"Cannot find evidence" fallback → request doc/URL</li>
-      <li>Mock export to Word</li>
+      <li>Real Word-compatible export (.doc download of the current chart)</li>
     </ul>
   </div>
   <div>
     <b>Out of scope (v1)</b>
     <ul>
       <li>Real LLM integration (mocked/deterministic for this prototype)</li>
-      <li>Real file parsing (PDF/OCR ingestion)</li>
-      <li>Multi-step undo history / branching versions</li>
+      <li>Real file parsing (PDF/OCR ingestion) — local file upload is present in the UI but intentionally inert, with in-product copy explaining it's not wired up yet</li>
+      <li>Auto-inserting a wholly new row from a chat request (e.g. "add the temperature sensor array") — the AI acknowledges the request and asks for details but won't silently add a row; row creation stays an explicit, reviewed action</li>
       <li>Multi-user collaboration, comments, or auth</li>
       <li>Free-form whole-chart edits in one prompt</li>
       <li>Legally-formatted, citation-grade Word export</li>
@@ -93,6 +94,16 @@ that will be used in legal proceedings.</p>
   confidence and refuse ungrounded claims reduces the single biggest legal risk in this
   workflow (an inference dressed up as documentary evidence).
 </div>
+<div class="decision">
+  <b>4. Each claim element gets its own isolated chat thread, not one shared timeline.</b>
+  Early in building this we hit a real bug: switching the active row only updated the
+  header label, not the visible conversation, so a previous element's messages stayed
+  on screen under a new element's context — and "undo" would silently apply to the
+  wrong row. In a tool whose output feeds legal filings, an analyst misreading which
+  element a suggestion belongs to is a correctness risk, not just a UX papercut. Fully
+  isolating chat state per row (rather than filtering a shared list) removes the failure
+  mode structurally instead of patching around it.
+</div>
 
 <h2>Acceptance Criteria</h2>
 <ul>
@@ -109,6 +120,14 @@ that will be used in legal proceedings.</p>
   <li><b>Trust/adoption:</b> % of AI proposals accepted or modified (vs. rejected outright) — a low accept rate signals poor suggestion quality.</li>
   <li><b>Safety:</b> % of chat sessions where the analyst issues a correction (edge case 1) — tracked as a quality signal on the underlying evidence-retrieval, not just usage.</li>
   <li><b>Undo rate:</b> low undo usage suggests the accept step is doing its job as a meaningful checkpoint rather than a rubber stamp.</li>
+</ul>
+
+<h2>Beyond the Core Ask</h2>
+<ul>
+  <li><b>LLM limitations:</b> the AI is instructed to refuse when evidence is thin rather than rationalize it (Key Decision 3) — the most common failure mode for chat-based drafting tools is confident fabrication, not silence.</li>
+  <li><b>Chat-specific quality evaluation:</b> confidence badges plus the correction-rate and undo-rate metrics above are proxies for suggestion quality that don't require a human grader reading every response.</li>
+  <li><b>Human-in-the-loop:</b> accept/reject/modify on every proposal (Key Decision 2), row-isolated context so approvals can't cross-contaminate (Key Decision 4), and explicit confirmation before destructive resets (deselect, new session).</li>
+  <li><b>Creative chat UX:</b> quick-action chips for common refinement intents, an inline file picker with preview instead of a blind upload, and proactive "can't find evidence" recovery that hands the analyst a concrete next step instead of a dead end.</li>
 </ul>
 
 </body>
