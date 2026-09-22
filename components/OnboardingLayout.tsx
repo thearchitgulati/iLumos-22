@@ -1,5 +1,7 @@
 "use client";
 
+import { ArrowLeftIcon } from "./icons";
+
 interface Props {
   onBack?: () => void;
   children: React.ReactNode;
@@ -18,9 +20,10 @@ export default function OnboardingLayout({ onBack, children }: Props) {
         {onBack && (
           <button
             onClick={onBack}
-            className="mb-6 flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800"
+            className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-600 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900"
           >
-            ← Back
+            <ArrowLeftIcon className="h-3.5 w-3.5" />
+            Back
           </button>
         )}
         {children}

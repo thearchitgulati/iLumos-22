@@ -4,6 +4,8 @@ import { useState } from "react";
 import OnboardingHeader from "./OnboardingHeader";
 import OnboardingLayout from "./OnboardingLayout";
 import UploadModal from "./UploadModal";
+import FileTypeBadge from "./FileTypeBadge";
+import { UploadCloudIcon, XIcon } from "./icons";
 import { PRODUCT_DOC_FILES, MockFile } from "@/lib/mockFiles";
 
 interface Props {
@@ -15,6 +17,8 @@ export default function UploadDocsStep({ onContinue, onBack }: Props) {
   const [files, setFiles] = useState<MockFile[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const removeFile = (id: string) => setFiles((f) => f.filter((x) => x.id !== id));
+
   return (
     <OnboardingLayout onBack={onBack}>
       <OnboardingHeader
@@ -23,33 +27,56 @@ export default function UploadDocsStep({ onContinue, onBack }: Props) {
         subtitle="Optional — reference docs the AI can cite as evidence: datasheets, marketing pages, technical specs. You can also upload these later, mid-chat, if the AI can't find evidence."
       />
 
-      <div className="mt-8 rounded-lg border border-zinc-200 bg-white p-5">
-        {files.length === 0 ? (
-          <p className="text-sm text-zinc-500">No documents added yet.</p>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {files.map((f) => (
-              <span
-                key={f.id}
-                className="rounded-full border border-green-200 bg-green-50 px-3 py-1.5 text-sm text-green-700"
-              >
-                ✓ {f.name}
-              </span>
-            ))}
+      {files.length === 0 ? (
+        <div className="mt-8 rounded-xl border-2 border-dashed border-zinc-300 bg-white/70 p-10 text-center transition-colors hover:border-zinc-400">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-orange-50 text-[var(--ilumos-orange)]">
+            <UploadCloudIcon className="h-6 w-6" />
           </div>
-        )}
-        <button
-          onClick={() => setModalOpen(true)}
-          className="mt-4 rounded-full bg-[var(--ilumos-ink)] px-4 py-2 text-sm font-medium text-white hover:bg-black"
-        >
-          Browse sample documents
-        </button>
-      </div>
+          <p className="mt-3 text-sm font-medium text-zinc-700">
+            Add datasheets, specs, or marketing pages
+          </p>
+          <p className="mx-auto mt-1 max-w-sm text-xs text-zinc-400">
+            Optional — the AI cites these as evidence. Skip this step and add files later if
+            you're not sure yet.
+          </p>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="mt-5 rounded-full bg-[var(--ilumos-ink)] px-5 py-2.5 text-sm font-medium text-white hover:bg-black"
+          >
+            Browse sample documents
+          </button>
+        </div>
+      ) : (
+        <div className="mt-8 space-y-2">
+          {files.map((f) => (
+            <div key={f.id} className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-3">
+              <FileTypeBadge kind={f.kind} />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-green-800">{f.name}</p>
+                <p className="text-xs text-green-600">{f.size}</p>
+              </div>
+              <button
+                onClick={() => removeFile(f.id)}
+                aria-label={`Remove ${f.name}`}
+                className="shrink-0 rounded-full p-1.5 text-green-600 hover:bg-green-100 hover:text-green-800"
+              >
+                <XIcon className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+          <button
+            onClick={() => setModalOpen(true)}
+            className="w-full rounded-lg border border-dashed border-zinc-300 py-3 text-sm font-medium text-zinc-500 hover:border-zinc-400 hover:bg-zinc-50"
+          >
+            + Add more files
+          </button>
+        </div>
+      )}
 
       <div className="mt-8 flex items-center gap-3">
         <button
           onClick={() => onContinue([])}
-          className="rounded-full px-4 py-2.5 text-sm font-medium text-zinc-500 hover:text-zinc-800"
+          className="rounded-full border border-zinc-300 bg-white px-5 py-2.5 text-sm font-semibold text-zinc-600 transition-colors hover:border-zinc-400 hover:bg-zinc-50"
         >
           Skip for now
         </button>

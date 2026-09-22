@@ -4,6 +4,8 @@ import { useState } from "react";
 import OnboardingHeader from "./OnboardingHeader";
 import OnboardingLayout from "./OnboardingLayout";
 import UploadModal from "./UploadModal";
+import FileTypeBadge from "./FileTypeBadge";
+import { UploadCloudIcon } from "./icons";
 import { CLAIM_CHART_FILES, MockFile } from "@/lib/mockFiles";
 
 interface Props {
@@ -22,22 +24,40 @@ export default function UploadChartStep({ onContinue }: Props) {
         subtitle="Start with the draft chart you want to refine — patent claim → accused product feature → AI reasoning."
       />
 
-      <div className="mt-8 rounded-lg border border-zinc-200 bg-white p-5">
-        <p className="text-sm text-zinc-500">
-          Upload a CSV, Excel, or Word file with your claim chart. For this demo, choose from a
-          small sample library — preview a file before selecting it.
-        </p>
-        <button
-          onClick={() => setModalOpen(true)}
-          className={`mt-4 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-            file
-              ? "border border-green-200 bg-green-50 text-green-700"
-              : "bg-[var(--ilumos-ink)] text-white hover:bg-black"
-          }`}
-        >
-          {file ? `✓ ${file.name} uploaded` : "Browse sample claim charts"}
-        </button>
-      </div>
+      {file ? (
+        <div className="mt-8 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4">
+          <FileTypeBadge kind={file.kind} />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-green-800">{file.name}</p>
+            <p className="text-xs text-green-600">{file.size} · ready to refine</p>
+          </div>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="shrink-0 rounded-full border border-green-300 bg-white px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-50"
+          >
+            Change
+          </button>
+        </div>
+      ) : (
+        <div className="mt-8 rounded-xl border-2 border-dashed border-zinc-300 bg-white/70 p-10 text-center transition-colors hover:border-zinc-400">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-orange-50 text-[var(--ilumos-orange)]">
+            <UploadCloudIcon className="h-6 w-6" />
+          </div>
+          <p className="mt-3 text-sm font-medium text-zinc-700">
+            Upload a CSV, Excel, or Word file with your claim chart
+          </p>
+          <p className="mx-auto mt-1 max-w-sm text-xs text-zinc-400">
+            For this demo, choose from a small sample library — you can preview a file before
+            selecting it.
+          </p>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="mt-5 rounded-full bg-[var(--ilumos-ink)] px-5 py-2.5 text-sm font-medium text-white hover:bg-black"
+          >
+            Browse sample claim charts
+          </button>
+        </div>
+      )}
 
       <button
         disabled={!file}
