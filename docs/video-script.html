@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>iLumos Video Script</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; line-height: 1.6; }
+  h1 { font-size: 22px; margin-bottom: 0; }
+  .meta { color: #666; font-size: 13px; }
+  h2 { font-size: 16px; margin-top: 32px; color: #1a1a1a; border-left: 4px solid #333; padding-left: 10px; }
+  .beat { margin: 14px 0; padding: 10px 14px; background: #f7f7f7; border-radius: 6px; }
+  .beat b { color: #333; }
+  .quote { font-style: italic; color: #333; }
+  .timing { font-size: 12px; color: #888; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>Video Walkthrough Script</h1>
+<p class="meta">Target runtime: 2:45 (under 3 min limit)</p>
+
+<h2>Part 1 — User Flow <span class="timing">(60s)</span></h2>
+<p><i>[Screen: user-flow.html open]</i></p>
+<div class="beat">
+<p class="quote">"This is iLumos — an AI chat interface for refining patent claim charts. The flow starts
+with the analyst uploading a claim chart and optional product docs, then setting system
+instructions that guide the AI's tone — for example, being conservative about legal claims.</p>
+<p class="quote">From there it's a loop: the analyst picks a claim element, asks the AI in chat to refine
+it — strengthen evidence, fix vague reasoning, whatever's needed — and the AI proposes a
+specific change. Nothing touches the chart until the analyst accepts, rejects, or modifies
+it. That loop repeats element by element until the chart's ready to export.</p>
+<p class="quote">I also built in three edge cases: if the AI cites the wrong evidence, the analyst corrects
+it right in chat. If the analyst disagrees with an accepted change, they can undo it. And
+if the AI genuinely can't find supporting evidence, instead of guessing, it asks the
+analyst to upload a document or paste a URL."</p>
+</div>
+
+<h2>Part 2 — Prototype Demo <span class="timing">(105s)</span></h2>
+<p><i>[Screen: localhost:3000, live]</i></p>
+
+<div class="beat">
+<span class="timing">15s — Setup</span>
+<p class="quote">"Here's the working prototype in Next.js. I upload the sample claim chart and the two
+reference docs, then set my system instructions — conservative on legal claims, prefer
+documentary over inferential evidence."</p>
+</div>
+
+<div class="beat">
+<span class="timing">25s — Weak evidence → can't find evidence edge case</span>
+<p class="quote">"I select element 3 — the ML algorithm claim, flagged weak — and ask the AI to strengthen
+the evidence. It checks the docs I've uploaded, can't find technical detail, and asks me
+for a whitepaper instead of making something up." <i>[click upload button]</i> "Now it comes
+back with a genuinely stronger, documented proposal."</p>
+</div>
+
+<div class="beat">
+<span class="timing">20s — Accept / modify</span>
+<p class="quote">"I can accept this outright, or click Modify to hand-edit the wording before it commits."
+<i>[demonstrate Accept]</i> "The chart updates in place, and confidence flips to strong."</p>
+</div>
+
+<div class="beat">
+<span class="timing">20s — Correction edge case</span>
+<p class="quote">"Now say the AI's evidence was just wrong — I tell it directly, in quotes, what the correct
+source text is, and it replaces the evidence immediately."</p>
+</div>
+
+<div class="beat">
+<span class="timing">15s — Undo</span>
+<p class="quote">"If I don't like a change, one click undoes it and the chat confirms exactly what was
+reverted — important since this feeds a legal filing."</p>
+</div>
+
+<div class="beat">
+<span class="timing">10s — Export</span>
+<p class="quote">"Once I'm happy with the chart, export to Word."</p>
+</div>
+
+<h2>Closing <span class="timing">(10s)</span></h2>
+<div class="beat">
+<p class="quote">"The core bet here is that every AI action is a proposal, never a silent write — that's
+the difference between a helpful drafting assistant and a liability in a legal document."</p>
+</div>
+
+</body>
+</html>

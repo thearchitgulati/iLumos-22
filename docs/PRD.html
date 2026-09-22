@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>iLumos PRD</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, sans-serif; max-width: 820px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; line-height: 1.55; }
+  h1 { font-size: 22px; margin-bottom: 0; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.03em; color: #444; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; }
+  .meta { color: #666; font-size: 13px; margin-top: 4px; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .cols { display: flex; gap: 24px; }
+  .cols > div { flex: 1; }
+  .decision { margin-bottom: 14px; }
+  .decision b { display: block; }
+  code { background: #f2f2f2; padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
+</style>
+</head>
+<body>
+
+<h1>iLumos — AI Chat-Based Claim Chart Refinement</h1>
+<p class="meta">PRD v1 · Product: iLumos (Lumenci)</p>
+
+<h2>Problem Statement</h2>
+<p>Patent analysts receive AI-drafted claim charts mapping patent claim elements to accused
+product evidence, but first-pass AI output is frequently too weak, vague, or legally
+imprecise to submit as-is — evidence may be inferential rather than documentary, reasoning
+may not anticipate claim construction disputes, and the AI sometimes misses features or
+cites the wrong source entirely. Today this refinement happens through manual editing,
+which is slow and doesn't leverage the AI's ability to re-research and re-argue on request.
+Analysts need a fast, auditable way to iteratively strengthen a claim chart through
+natural-language requests, with the AI never making an unreviewed change to a document
+that will be used in legal proceedings.</p>
+
+<h2>User Stories</h2>
+<ul>
+  <li>As a patent analyst, I want to select a specific claim element and ask the AI to strengthen its evidence, so I don't have to manually re-research and re-write it.</li>
+  <li>As a patent analyst, I want to correct the AI when it cites wrong or inaccurate evidence, so the chart stays factually reliable.</li>
+  <li>As a patent analyst, I want to undo a refinement I disagree with, so I can experiment with AI suggestions without fear of losing the original.</li>
+  <li>As a patent analyst, I want the AI to tell me when it can't find supporting evidence and ask me for a source, rather than fabricating a weak justification.</li>
+  <li>As a patent analyst, I want to set system instructions (e.g. "be conservative on legal claims") once, so the AI's tone and rigor stay consistent across the session.</li>
+  <li>As a patent analyst, I want every AI suggestion to require my explicit accept before it's applied, so nothing enters a legal work product without my review.</li>
+</ul>
+
+<h2>Core Features — MVP Scope</h2>
+<div class="cols">
+  <div>
+    <b>In scope</b>
+    <ul>
+      <li>Upload claim chart + optional reference docs</li>
+      <li>System instructions box, set once per session</li>
+      <li>Row-scoped chat refinement</li>
+      <li>AI proposes a specific replacement for Evidence or Reasoning</li>
+      <li>Accept / Reject / Modify gate on every proposal</li>
+      <li>Single-step undo per row</li>
+      <li>Confidence flag (strong/moderate/weak), proactively cited by the AI</li>
+      <li>"Cannot find evidence" fallback → request doc/URL</li>
+      <li>Mock export to Word</li>
+    </ul>
+  </div>
+  <div>
+    <b>Out of scope (v1)</b>
+    <ul>
+      <li>Real LLM integration (mocked/deterministic for this prototype)</li>
+      <li>Real file parsing (PDF/OCR ingestion)</li>
+      <li>Multi-step undo history / branching versions</li>
+      <li>Multi-user collaboration, comments, or auth</li>
+      <li>Free-form whole-chart edits in one prompt</li>
+      <li>Legally-formatted, citation-grade Word export</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Key Decisions</h2>
+<div class="decision">
+  <b>1. Refinement is row-scoped, not chart-wide.</b>
+  A single ambiguous prompt across an entire chart risks the AI silently touching claim
+  elements the analyst didn't intend to change. Scoping each request to one selected
+  element keeps AI reasoning traceable and matches how analysts already think about
+  claim charts (element by element).
+</div>
+<div class="decision">
+  <b>2. Every AI suggestion is a proposal, not a write.</b>
+  Given this output feeds legal filings, we treat the AI as a drafting assistant, not an
+  editor with write access. Human-in-the-loop accept/reject/modify is non-negotiable
+  even though it adds a click.
+</div>
+<div class="decision">
+  <b>3. The AI proactively flags weak evidence and admits when it can't find support</b>,
+  rather than only responding when asked. LLMs will produce a plausible-sounding
+  justification even from thin evidence if asked to; instructing the AI to flag
+  confidence and refuse ungrounded claims reduces the single biggest legal risk in this
+  workflow (an inference dressed up as documentary evidence).
+</div>
+
+<h2>Acceptance Criteria</h2>
+<ul>
+  <li>Given a chart with a "weak" confidence row, when the analyst asks to strengthen it without supplemental docs, the AI must ask for a document/URL rather than fabricate evidence.</li>
+  <li>Given an AI proposal, the chart must remain unchanged until the analyst clicks Accept or Confirm-edit; Reject must leave the chart untouched and prompt for feedback.</li>
+  <li>Given an accepted change, the analyst must be able to revert that specific row to its prior value via Undo, and the chat must confirm what was reverted.</li>
+  <li>Given the analyst states an AI citation is incorrect and supplies the correct quote, the next chart update must reflect the supplied quote, not the original AI evidence.</li>
+  <li>The 3-column chart (Claim Element / Evidence / Reasoning) must be visible and update in place after every accepted change, with no page reload.</li>
+</ul>
+
+<h2>Success Metrics</h2>
+<ul>
+  <li><b>Efficiency:</b> median time to bring a claim element from "weak" to "strong" confidence via chat, vs. manual editing baseline.</li>
+  <li><b>Trust/adoption:</b> % of AI proposals accepted or modified (vs. rejected outright) — a low accept rate signals poor suggestion quality.</li>
+  <li><b>Safety:</b> % of chat sessions where the analyst issues a correction (edge case 1) — tracked as a quality signal on the underlying evidence-retrieval, not just usage.</li>
+  <li><b>Undo rate:</b> low undo usage suggests the accept step is doing its job as a meaningful checkpoint rather than a rubber stamp.</li>
+</ul>
+
+</body>
+</html>

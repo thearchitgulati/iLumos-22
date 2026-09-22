@@ -1,3 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>iLumos User Flow</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  body { font-family: -apple-system, Segoe UI, sans-serif; max-width: 1000px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; }
+  h1 { font-size: 22px; }
+  p.sub { color: #666; margin-top: -8px; }
+  .legend { display: flex; gap: 20px; margin: 16px 0 24px; font-size: 13px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  .mermaid { background: #fff; }
+</style>
+</head>
+<body>
+<h1>iLumos — User Flow: Claim Chart Refinement</h1>
+<p class="sub">Upload → chat-based refinement loop → export, with 3 required edge cases</p>
+
+<div class="legend">
+  <span><span class="swatch" style="background:#fff3cd;border:1px solid #856404"></span>Decision point</span>
+  <span><span class="swatch" style="background:#f8d7da;border:1px solid #721c24"></span>Edge case</span>
+</div>
+
+<pre class="mermaid">
 flowchart TD
     A[Analyst opens iLumos] --> B[Upload claim chart\ncsv/table]
     B --> C[Optionally upload product docs\nspecs, marketing, technical PDFs]
@@ -37,3 +63,8 @@ flowchart TD
     style J fill:#f8d7da,stroke:#721c24
     style P fill:#f8d7da,stroke:#721c24
     style Q fill:#f8d7da,stroke:#721c24
+</pre>
+
+<script>mermaid.initialize({ startOnLoad: true, theme: "default" });</script>
+</body>
+</html>
