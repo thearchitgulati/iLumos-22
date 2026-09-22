@@ -25,4 +25,4 @@ export interface ChatMessage {
   resolved?: "accepted" | "rejected" | "modified" | "undone";
 }
 
-export type AppStage = "upload" | "setup" | "workspace";
+export type AppStage = "upload-chart" | "upload-docs" | "setup" | "workspace";
