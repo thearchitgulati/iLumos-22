@@ -1,0 +1,39 @@
+flowchart TD
+    A[Analyst opens iLumos] --> B[Upload claim chart\ncsv/table]
+    B --> C[Optionally upload product docs\nspecs, marketing, technical PDFs]
+    C --> D[Set system instructions\ne.g. 'be conservative on legal claims',\n'flag weak evidence']
+    D --> E[Claim chart rendered\n3-column table:\nClaim Element / Evidence / AI Reasoning]
+    E --> F[Analyst sends chat prompt\ne.g. 'Strengthen evidence for element 2']
+    F --> G[AI analyzes chat + relevant row + uploaded docs]
+
+    G --> H{AI outcome}
+    H -->|Found stronger evidence| I[AI replies in chat with\nproposed Evidence + Reasoning]
+    H -->|Cannot find evidence\nEDGE CASE 3| J[AI asks analyst in chat:\n'No supporting evidence found.\nPlease upload a doc or paste a URL']
+    J --> J1[Analyst uploads doc / pastes URL]
+    J1 --> G
+
+    I --> K{Analyst reviews suggestion}
+    K -->|Accept| L[Chart row updated,\nchange highlighted]
+    K -->|Reject| M[Analyst replies with feedback\ne.g. 'not specific enough']
+    M --> G
+    K -->|Modify| N[Analyst edits suggestion inline\nvia chat, then confirms]
+    N --> L
+
+    L --> O{Analyst continues refining?}
+    O -->|Yes, another element| F
+    O -->|Notices AI cited wrong evidence\nEDGE CASE 1| P[Analyst corrects via chat:\n'That quote is wrong, use this instead']
+    P --> G
+    O -->|Wants to undo last change\nEDGE CASE 2| Q[Analyst types 'undo'\nor clicks Undo]
+    Q --> R[Chart reverts to previous version,\nchat confirms what was undone]
+    R --> O
+
+    O -->|Done refining| S[Analyst reviews final chart]
+    S --> T[Export to Word]
+    T --> U[Refined claim chart\nready for legal filing]
+
+    style H fill:#fff3cd,stroke:#856404
+    style K fill:#fff3cd,stroke:#856404
+    style O fill:#fff3cd,stroke:#856404
+    style J fill:#f8d7da,stroke:#721c24
+    style P fill:#f8d7da,stroke:#721c24
+    style Q fill:#f8d7da,stroke:#721c24
