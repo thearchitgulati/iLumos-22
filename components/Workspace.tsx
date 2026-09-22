@@ -5,6 +5,8 @@ import { ChatMessage, ClaimRow } from "@/lib/types";
 import { getAIResponse } from "@/lib/mockAI";
 import ConfidenceBadge from "./ConfidenceBadge";
 import Logo from "./Logo";
+import UploadModal from "./UploadModal";
+import { SUPPLEMENTAL_DOC_FILE } from "@/lib/mockFiles";
 
 interface Props {
   initialChart: ClaimRow[];
@@ -32,6 +34,7 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
   const [modifyingMessageId, setModifyingMessageId] = useState<string | null>(null);
   const [modifyDraft, setModifyDraft] = useState("");
   const [lastExported, setLastExported] = useState<string | null>(null);
+  const [evidenceModalRowId, setEvidenceModalRowId] = useState<string | null>(null);
 
   const activeRow = chart.find((r) => r.id === activeRowId) ?? chart[0];
 
@@ -97,8 +100,7 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
     });
   }
 
-  function handleUploadForEvidence(rowId: string) {
-    const docName = "acme-ml-technical-whitepaper.pdf";
+  function handleUploadForEvidence(rowId: string, docName: string) {
     setUploadedDocs((d) => [...d, docName]);
     setSupplementalByRow((s) => ({ ...s, [rowId]: true }));
     setWaitingForUploadRowId(null);
@@ -248,10 +250,10 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
                     waitingForUploadRowId === m.needsEvidence.rowId &&
                     messages[messages.length - 1]?.id === m.id && (
                     <button
-                      onClick={() => handleUploadForEvidence(m.needsEvidence!.rowId)}
+                      onClick={() => setEvidenceModalRowId(m.needsEvidence!.rowId)}
                       className="mt-2 block rounded-md border border-[var(--ilumos-orange)] bg-white px-3 py-1.5 text-xs font-medium text-[var(--ilumos-orange)] hover:bg-orange-50"
                     >
-                      📎 Upload acme-ml-technical-whitepaper.pdf
+                      📎 Browse technical documentation
                     </button>
                   )}
 
@@ -349,6 +351,20 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
           </div>
         </div>
       </div>
+
+      {evidenceModalRowId && (
+        <UploadModal
+          title="Select technical documentation"
+          subtitle="Choose a file the AI can cite as stronger evidence, or preview it first."
+          files={[SUPPLEMENTAL_DOC_FILE]}
+          mode="single"
+          onClose={() => setEvidenceModalRowId(null)}
+          onConfirm={(files) => {
+            handleUploadForEvidence(evidenceModalRowId, files[0].name);
+            setEvidenceModalRowId(null);
+          }}
+        />
+      )}
     </div>
   );
 }
