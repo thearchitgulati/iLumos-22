@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChatMessage, ClaimRow } from "@/lib/types";
 import { getAIResponse } from "@/lib/mockAI";
 import ConfidenceBadge from "./ConfidenceBadge";
+import Logo from "./Logo";
 
 interface Props {
   initialChart: ClaimRow[];
@@ -148,15 +149,20 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
   return (
     <div className="flex h-screen flex-col bg-zinc-50">
       <header className="flex items-center justify-between border-b border-zinc-200 bg-white px-6 py-3">
-        <div>
-          <h1 className="text-sm font-semibold text-zinc-900">iLumos — US123456 vs. Acme Corp Thermostat</h1>
-          <p className="text-xs text-zinc-500">
-            {uploadedDocs.length} reference doc(s) loaded · system instructions active
-          </p>
+        <div className="flex items-center gap-4">
+          <Logo size="sm" />
+          <div className="border-l border-zinc-200 pl-4">
+            <h1 className="text-sm font-semibold text-[var(--ilumos-ink)]">
+              US123456 vs. Acme Corp Thermostat
+            </h1>
+            <p className="text-xs text-zinc-500">
+              {uploadedDocs.length} reference doc(s) loaded · system instructions active
+            </p>
+          </div>
         </div>
         <button
           onClick={handleExport}
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700"
+          className="rounded-full bg-[var(--ilumos-ink)] px-4 py-2 text-sm font-semibold text-white hover:bg-black transition-colors"
         >
           Export to Word
         </button>
@@ -185,7 +191,7 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
                   key={row.id}
                   onClick={() => setActiveRowId(row.id)}
                   className={`cursor-pointer border-t border-zinc-100 align-top transition-colors ${
-                    row.id === activeRowId ? "bg-blue-50" : "hover:bg-zinc-50"
+                    row.id === activeRowId ? "bg-orange-50" : "hover:bg-zinc-50"
                   }`}
                 >
                   <td className="p-3 font-medium text-zinc-900">{row.element}</td>
@@ -229,10 +235,10 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
                 <div
                   className={`max-w-[90%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
                     m.role === "user"
-                      ? "bg-zinc-900 text-white"
+                      ? "bg-[var(--ilumos-ink)] text-white"
                       : m.role === "system"
                       ? "bg-zinc-100 text-zinc-500 text-xs italic"
-                      : "bg-blue-50 text-zinc-800 border border-blue-100"
+                      : "bg-orange-50 text-zinc-800 border border-orange-100"
                   }`}
                 >
                   {m.text}
@@ -243,7 +249,7 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
                     messages[messages.length - 1]?.id === m.id && (
                     <button
                       onClick={() => handleUploadForEvidence(m.needsEvidence!.rowId)}
-                      className="mt-2 block rounded-md border border-blue-300 bg-white px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-50"
+                      className="mt-2 block rounded-md border border-[var(--ilumos-orange)] bg-white px-3 py-1.5 text-xs font-medium text-[var(--ilumos-orange)] hover:bg-orange-50"
                     >
                       📎 Upload acme-ml-technical-whitepaper.pdf
                     </button>
@@ -286,7 +292,7 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
                       <div className="mt-1 flex gap-2">
                         <button
                           onClick={() => applyProposal(m, "modified", modifyDraft)}
-                          className="rounded-md bg-zinc-900 px-3 py-1 text-xs font-medium text-white hover:bg-zinc-700"
+                          className="rounded-md bg-[var(--ilumos-ink)] px-3 py-1 text-xs font-medium text-white hover:bg-black"
                         >
                           Confirm edit
                         </button>
@@ -318,7 +324,7 @@ export default function Workspace({ initialChart, uploadedDocs: initialDocs, sys
               />
               <button
                 onClick={handleSend}
-                className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700"
+                className="rounded-full bg-[var(--ilumos-ink)] px-4 py-2 text-sm font-medium text-white hover:bg-black transition-colors"
               >
                 Send
               </button>
