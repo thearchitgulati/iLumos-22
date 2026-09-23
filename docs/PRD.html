@@ -29,6 +29,7 @@
   .label { font-weight: 700; }
   hr { border: none; border-top: 2px solid #ff5100; margin: 10px 0 0 0; width: 48px; }
   .note { color: #5f6368; font-size: 13.5px; font-style: italic; }
+  .signoff { margin-top: 40px; color: #5f6368; font-size: 13.5px; font-style: italic; }
 
   @media print {
     @page { size: Letter; margin: 0.55in 0.65in; }
@@ -51,7 +52,7 @@
 <div class="logo-sub">by Lumenci</div>
 
 <h1>Claim Chart Refinement, PRD</h1>
-<p class="byline">Archit Gulati<br />Draft v1<br />Written for the Lumenci PM take-home</p>
+<p class="byline">Draft v1</p>
 <hr />
 
 <h2>Problem Statement</h2>
@@ -171,6 +172,8 @@ guesses I'd want to validate with a real analyst before building further:</p>
   <li>Assumed "add a new row" should stay a manual, reviewed action rather than something the AI can do from chat. Felt like the safer default, but it's a real UX cost if it comes up a lot in practice.</li>
   <li>Mocked the LLM entirely for this prototype. The conversational patterns (row-scoped requests, confidence flagging, evidence refusal) are the actual design; wiring up a real model is a separate, more mechanical problem.</li>
 </ul>
+
+<p class="signoff">By Archit Gulati</p>
 
 </body>
 </html>
