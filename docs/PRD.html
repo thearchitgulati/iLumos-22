@@ -4,130 +4,169 @@
 <meta charset="UTF-8" />
 <title>iLumos PRD</title>
 <style>
-  body { font-family: -apple-system, Segoe UI, sans-serif; max-width: 820px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; line-height: 1.55; }
-  h1 { font-size: 22px; margin-bottom: 0; }
-  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.03em; color: #444; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; }
-  .meta { color: #666; font-size: 13px; margin-top: 4px; }
-  ul { padding-left: 20px; }
-  li { margin-bottom: 6px; }
-  .cols { display: flex; gap: 24px; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 0 24px;
+    color: #202124;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .logo { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 1px; }
+  .logo span { color: #ff5100; }
+  .logo-sub { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: #9aa0a6; text-transform: uppercase; margin-bottom: 18px; }
+  h1 { font-size: 23px; font-weight: 700; margin-bottom: 2px; }
+  .byline { color: #5f6368; font-size: 13px; margin-top: 0; margin-bottom: 20px; }
+  h2 { font-size: 15px; font-weight: 700; margin-top: 30px; margin-bottom: 8px; color: #202124; border-left: 3px solid #ff5100; padding-left: 9px; }
+  p { margin: 10px 0; }
+  ul { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 5px; }
+  .cols { display: flex; gap: 30px; margin-top: 6px; }
   .cols > div { flex: 1; }
-  .decision { margin-bottom: 14px; }
-  .decision b { display: block; }
-  code { background: #f2f2f2; padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
+  .cols h3 { font-size: 13.5px; font-weight: 700; margin: 0 0 6px 0; }
+  .decision { margin-bottom: 16px; }
+  .decision p { margin: 3px 0 0 0; }
+  .label { font-weight: 700; }
+  hr { border: none; border-top: 2px solid #ff5100; margin: 10px 0 0 0; width: 48px; }
+  .note { color: #5f6368; font-size: 13.5px; font-style: italic; }
+
+  @media print {
+    @page { size: Letter; margin: 0.6in 0.7in; }
+    body { max-width: none; margin: 0; padding: 0; font-size: 11.5px; line-height: 1.5; }
+    h1 { font-size: 19px; }
+    h2 { font-size: 13px; margin-top: 16px; margin-bottom: 5px; }
+    p { margin: 6px 0; }
+    ul { margin: 6px 0; }
+    li { margin-bottom: 3px; }
+  }
 </style>
 </head>
 <body>
 
-<h1>iLumos — AI Chat-Based Claim Chart Refinement</h1>
-<p class="meta">PRD v1 · Product: iLumos (Lumenci)</p>
+<div class="logo"><span>i</span>Lumos</div>
+<div class="logo-sub">by Lumenci</div>
 
-<h2>Problem Statement</h2>
-<p>Patent analysts receive AI-drafted claim charts mapping patent claim elements to accused
-product evidence, but first-pass AI output is frequently too weak, vague, or legally
-imprecise to submit as-is — evidence may be inferential rather than documentary, reasoning
-may not anticipate claim construction disputes, and the AI sometimes misses features or
-cites the wrong source entirely. Today this refinement happens through manual editing,
-which is slow and doesn't leverage the AI's ability to re-research and re-argue on request.
-Analysts need a fast, auditable way to iteratively strengthen a claim chart through
-natural-language requests, with the AI never making an unreviewed change to a document
-that will be used in legal proceedings.</p>
+<h1>Claim Chart Refinement, PRD</h1>
+<p class="byline">Archit Gulati, Draft v1, written for the Lumenci PM take-home, Sept 2026</p>
+<hr />
 
-<h2>User Stories</h2>
+<h2>The problem</h2>
+<p>Analysts get an AI-drafted first pass of a claim chart, and it's usually not good enough to send out as-is.
+Sometimes the evidence is just marketing copy dressed up as proof, sometimes the reasoning is too thin to
+survive a claim construction fight, and every so often the AI just misses something or points at the wrong
+part of the product. Right now the only way to fix any of that is manual editing in whatever doc tool they're
+using, which throws away the one thing the AI is actually good at: re-reading the source material and
+re-arguing the point when you tell it what's wrong. I wanted a chat layer on top of the chart that lets an
+analyst say "this is weak, fix it" and get something better back, without ever letting the AI quietly rewrite
+something it shouldn't.</p>
+
+<h2>Who this is for, what they need</h2>
 <ul>
-  <li>As a patent analyst, I want to select a specific claim element and ask the AI to strengthen its evidence, so I don't have to manually re-research and re-write it.</li>
-  <li>As a patent analyst, I want to correct the AI when it cites wrong or inaccurate evidence, so the chart stays factually reliable.</li>
-  <li>As a patent analyst, I want to undo a refinement I disagree with, so I can experiment with AI suggestions without fear of losing the original.</li>
-  <li>As a patent analyst, I want the AI to tell me when it can't find supporting evidence and ask me for a source, rather than fabricating a weak justification.</li>
-  <li>As a patent analyst, I want to set system instructions (e.g. "be conservative on legal claims") once, so the AI's tone and rigor stay consistent across the session.</li>
-  <li>As a patent analyst, I want every AI suggestion to require my explicit accept before it's applied, so nothing enters a legal work product without my review.</li>
+  <li>Pick one claim element and ask the AI to make the evidence stronger, instead of re-researching it by hand.</li>
+  <li>Push back when the AI cites the wrong thing, and have that actually stick.</li>
+  <li>Undo a change I didn't mean to accept, without losing everything else I did that session.</li>
+  <li>Have the AI tell me "I don't have anything to back this up" instead of making something up that sounds fine.</li>
+  <li>Set a posture once ("be conservative here") and have it hold for the rest of the session.</li>
+  <li>Never have the chart change underneath me. I want to see the suggestion before it's real.</li>
 </ul>
 
-<h2>Core Features — MVP Scope</h2>
+<h2>What's actually in the prototype</h2>
+<p>Setup is three short steps: upload the claim chart, optionally add product docs the AI can cite, set
+instructions for how it should behave. Each upload step has a little file browser with a preview so you're not
+picking blind. After that you're in the workspace: pick a row, ask for what you want in plain language, and the
+AI comes back with a specific proposed change to either the evidence or the reasoning, never both, never
+silently. You accept it, reject it, or edit it yourself before it goes in. Every row keeps its own undo history.
+If the AI can't back up a claim from what's uploaded, it says so and asks for a doc or a URL instead of
+guessing. Export produces a real .doc file with the current state of the chart.</p>
+
 <div class="cols">
   <div>
-    <b>In scope</b>
+    <h3>What I built</h3>
     <ul>
-      <li>3-step guided setup: upload claim chart → optional reference docs → system instructions, each with a file picker that supports preview-before-select</li>
-      <li>Proactive document management: add/remove reference docs anytime from the header, workspace, or chat composer, not just at setup</li>
-      <li>Row-scoped chat refinement, with each claim element keeping its own isolated conversation thread (switching elements never carries over another element's context)</li>
-      <li>AI proposes a specific replacement for Evidence or Reasoning</li>
-      <li>Accept / Reject / Modify gate on every proposal</li>
-      <li>Full undo history per row (step back through successive accepted changes)</li>
-      <li>Deselect the active element and "New session" reset, both with explicit confirmation before discarding state</li>
-      <li>Confidence flag (strong/moderate/weak), proactively cited by the AI</li>
-      <li>"Cannot find evidence" fallback → request doc/URL</li>
-      <li>Real Word-compatible export (.doc download of the current chart)</li>
+      <li>3-step setup with file preview before you commit to anything</li>
+      <li>You can add or remove reference docs at any point, not just at setup: header, chat, a card in the workspace, wherever's convenient</li>
+      <li>Each claim element has its own separate conversation. More on why below.</li>
+      <li>AI proposes one specific change at a time, tied to accept/reject/modify</li>
+      <li>Undo goes back through the full history of a row, not just one step</li>
+      <li>You can deselect a row, or wipe the session and start over, both with a confirm step</li>
+      <li>Confidence tag (strong/moderate/weak) that the AI keeps up to date on its own</li>
+      <li>Real Word-compatible export, not a fake success toast</li>
     </ul>
   </div>
   <div>
-    <b>Out of scope (v1)</b>
+    <h3>What I deliberately left out</h3>
     <ul>
-      <li>Real LLM integration (mocked/deterministic for this prototype)</li>
-      <li>Real file parsing (PDF/OCR ingestion) — local file upload is present in the UI but intentionally inert, with in-product copy explaining it's not wired up yet</li>
-      <li>Auto-inserting a wholly new row from a chat request (e.g. "add the temperature sensor array") — the AI acknowledges the request and asks for details but won't silently add a row; row creation stays an explicit, reviewed action</li>
-      <li>Multi-user collaboration, comments, or auth</li>
-      <li>Free-form whole-chart edits in one prompt</li>
-      <li>Legally-formatted, citation-grade Word export</li>
+      <li>No real LLM call. Responses are scripted/deterministic so the demo is reproducible</li>
+      <li>No real file parsing. Local upload sits in the UI but is inert, and says so, rather than pretending to work</li>
+      <li>If you ask the AI to add a whole new row it wasn't tracking, it'll ask you for details instead of just inserting one. Didn't want silent chart edits, even well-intentioned ones</li>
+      <li>No multi-user, no auth, nothing collaborative</li>
+      <li>No whole-chart-at-once editing from one prompt. Every request is scoped to a row on purpose</li>
+      <li>Export isn't citation-formatted or litigation-ready, just a clean readable doc</li>
     </ul>
   </div>
 </div>
 
-<h2>Key Decisions</h2>
+<h2>Why I made the calls I made</h2>
+
 <div class="decision">
-  <b>1. Refinement is row-scoped, not chart-wide.</b>
-  A single ambiguous prompt across an entire chart risks the AI silently touching claim
-  elements the analyst didn't intend to change. Scoping each request to one selected
-  element keeps AI reasoning traceable and matches how analysts already think about
-  claim charts (element by element).
-</div>
-<div class="decision">
-  <b>2. Every AI suggestion is a proposal, not a write.</b>
-  Given this output feeds legal filings, we treat the AI as a drafting assistant, not an
-  editor with write access. Human-in-the-loop accept/reject/modify is non-negotiable
-  even though it adds a click.
-</div>
-<div class="decision">
-  <b>3. The AI proactively flags weak evidence and admits when it can't find support</b>,
-  rather than only responding when asked. LLMs will produce a plausible-sounding
-  justification even from thin evidence if asked to; instructing the AI to flag
-  confidence and refuse ungrounded claims reduces the single biggest legal risk in this
-  workflow (an inference dressed up as documentary evidence).
-</div>
-<div class="decision">
-  <b>4. Each claim element gets its own isolated chat thread, not one shared timeline.</b>
-  Early in building this we hit a real bug: switching the active row only updated the
-  header label, not the visible conversation, so a previous element's messages stayed
-  on screen under a new element's context — and "undo" would silently apply to the
-  wrong row. In a tool whose output feeds legal filings, an analyst misreading which
-  element a suggestion belongs to is a correctness risk, not just a UX papercut. Fully
-  isolating chat state per row (rather than filtering a shared list) removes the failure
-  mode structurally instead of patching around it.
+  <p class="label">Scoping every request to one row instead of the whole chart</p>
+  <p>I went back and forth on this. Letting someone type one prompt and have it touch the whole chart is faster,
+  but it's also exactly how you get a change nobody asked for buried in row 6. Analysts already think about
+  these charts element by element, so matching that felt safer than it felt slow.</p>
 </div>
 
-<h2>Acceptance Criteria</h2>
+<div class="decision">
+  <p class="label">Nothing the AI says ever writes to the chart directly</p>
+  <p>This is the one I wouldn't compromise on. The output here ends up in a legal filing, so the AI is a drafting
+  assistant, not an editor with commit access. Accept/reject/modify on literally everything, even if that's an
+  extra click every time.</p>
+</div>
+
+<div class="decision">
+  <p class="label">The AI has to say "I don't have evidence for this" out loud</p>
+  <p>Left to its own devices, a model asked to "strengthen the evidence" will usually find a way to sound
+  confident even when the underlying material is thin. That's the actual failure mode I was most worried about
+  here, more than it giving a bad answer: it giving a plausible-sounding bad answer. So weak rows get flagged
+  proactively, and if there's nothing to point to, it says so and asks for a source instead of reaching.</p>
+</div>
+
+<div class="decision">
+  <p class="label">Each element gets its own chat thread</p>
+  <p>Honestly, this one wasn't in my original plan, I found it as a bug. Early on, switching the selected row only
+  updated the label at the top; the actual conversation underneath stayed put, so you'd be looking at element 1's
+  chat while the header said element 3, and "undo" would quietly apply to whichever row was actually selected.
+  In a normal app that's an annoying paper cut. In something feeding a legal document, that's an analyst
+  approving a change while looking at the wrong context, which is a real problem, not a UX nitpick. Once I saw
+  it happen I redid the state so each row's conversation is fully isolated instead of being one shared list I'd
+  have to keep filtering correctly.</p>
+</div>
+
+<h2>How I'd know it's working</h2>
 <ul>
-  <li>Given a chart with a "weak" confidence row, when the analyst asks to strengthen it without supplemental docs, the AI must ask for a document/URL rather than fabricate evidence.</li>
-  <li>Given an AI proposal, the chart must remain unchanged until the analyst clicks Accept or Confirm-edit; Reject must leave the chart untouched and prompt for feedback.</li>
-  <li>Given an accepted change, the analyst must be able to revert that specific row to its prior value via Undo, and the chat must confirm what was reverted.</li>
-  <li>Given the analyst states an AI citation is incorrect and supplies the correct quote, the next chart update must reflect the supplied quote, not the original AI evidence.</li>
-  <li>The 3-column chart (Claim Element / Evidence / Reasoning) must be visible and update in place after every accepted change, with no page reload.</li>
+  <li>Given a weak row, if you ask to strengthen it and there's nothing uploaded that could help, the AI has to ask for a source, not invent one.</li>
+  <li>An AI proposal never touches the chart until you explicitly accept or confirm an edit. Reject leaves it untouched and asks what's wrong.</li>
+  <li>Accepted changes can be undone per row, and the chat says what got reverted.</li>
+  <li>If you tell it a citation is wrong and give it the right quote, the chart reflects your quote, not the AI's original one.</li>
+  <li>The chart updates in place after every accepted change. No reload, no losing your spot.</li>
 </ul>
 
-<h2>Success Metrics</h2>
+<h2>How I'd measure it if this were real</h2>
 <ul>
-  <li><b>Efficiency:</b> median time to bring a claim element from "weak" to "strong" confidence via chat, vs. manual editing baseline.</li>
-  <li><b>Trust/adoption:</b> % of AI proposals accepted or modified (vs. rejected outright) — a low accept rate signals poor suggestion quality.</li>
-  <li><b>Safety:</b> % of chat sessions where the analyst issues a correction (edge case 1) — tracked as a quality signal on the underlying evidence-retrieval, not just usage.</li>
-  <li><b>Undo rate:</b> low undo usage suggests the accept step is doing its job as a meaningful checkpoint rather than a rubber stamp.</li>
+  <li>Time to get a weak row to strong via chat, compared to doing it by hand. This is the whole pitch, so it should show up here.</li>
+  <li>Accept/modify rate on AI proposals. If people are rejecting outright a lot, the suggestions aren't good enough yet.</li>
+  <li>How often analysts have to correct the AI's evidence. This is really a proxy for how good the underlying retrieval is, not a UX metric.</li>
+  <li>Undo rate. If it's high, the accept step isn't doing its job as a real checkpoint.</li>
 </ul>
 
-<h2>Beyond the Core Ask</h2>
+<h2>Assumptions and things I'd want to double check</h2>
+<p class="note">Written under a 24-hour window with no ability to ask clarifying questions, so a few of these are
+guesses I'd want to validate with a real analyst before building further:</p>
 <ul>
-  <li><b>LLM limitations:</b> the AI is instructed to refuse when evidence is thin rather than rationalize it (Key Decision 3) — the most common failure mode for chat-based drafting tools is confident fabrication, not silence.</li>
-  <li><b>Chat-specific quality evaluation:</b> confidence badges plus the correction-rate and undo-rate metrics above are proxies for suggestion quality that don't require a human grader reading every response.</li>
-  <li><b>Human-in-the-loop:</b> accept/reject/modify on every proposal (Key Decision 2), row-isolated context so approvals can't cross-contaminate (Key Decision 4), and explicit confirmation before destructive resets (deselect, new session).</li>
-  <li><b>Creative chat UX:</b> quick-action chips for common refinement intents, an inline file picker with preview instead of a blind upload, and proactive "can't find evidence" recovery that hands the analyst a concrete next step instead of a dead end.</li>
+  <li>Assumed one active claim chart at a time is fine for v1. Didn't build anything for managing multiple charts or patents in parallel.</li>
+  <li>Assumed analysts would rather see the AI decline to help than get a confident-sounding guess. I'd want to confirm that trade-off doesn't just shift the work back to them too often.</li>
+  <li>Assumed "add a new row" should stay a manual, reviewed action rather than something the AI can do from chat. Felt like the safer default, but it's a real UX cost if it comes up a lot in practice.</li>
+  <li>Mocked the LLM entirely for this prototype. The conversational patterns (row-scoped requests, confidence flagging, evidence refusal) are the actual design; wiring up a real model is a separate, more mechanical problem.</li>
 </ul>
 
 </body>
