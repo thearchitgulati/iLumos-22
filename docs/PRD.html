@@ -54,7 +54,7 @@
 <p class="byline">Archit Gulati<br />Draft v1<br />Written for the Lumenci PM take-home</p>
 <hr />
 
-<h2>The problem</h2>
+<h2>Problem Statement</h2>
 <p>Analysts get an AI-drafted first pass of a claim chart, and it's usually not good enough to send out as-is.
 Sometimes the evidence is just marketing copy dressed up as proof, sometimes the reasoning is too thin to
 survive a claim construction fight, and every so often the AI just misses something or points at the wrong
@@ -64,7 +64,7 @@ re-arguing the point when you tell it what's wrong. I wanted a chat layer on top
 analyst say "this is weak, fix it" and get something better back, without ever letting the AI quietly rewrite
 something it shouldn't.</p>
 
-<h2>Who this is for, what they need</h2>
+<h2>User Stories</h2>
 <ul>
   <li>Pick one claim element and ask the AI to make the evidence stronger, instead of re-researching it by hand.</li>
   <li>Push back when the AI cites the wrong thing, and have that actually stick.</li>
@@ -74,7 +74,7 @@ something it shouldn't.</p>
   <li>Never have the chart change underneath me. I want to see the suggestion before it's real.</li>
 </ul>
 
-<h2>What's actually in the prototype</h2>
+<h2>Core Features</h2>
 <p>Setup is three short steps: upload the claim chart, optionally add product docs the AI can cite, set
 instructions for how it should behave. Each upload step has a little file browser with a preview so you're not
 picking blind. After that you're in the workspace: pick a row, ask for what you want in plain language, and the
@@ -85,7 +85,7 @@ guessing. Export produces a real .doc file with the current state of the chart.<
 
 <div class="cols">
   <div>
-    <h3>What I built</h3>
+    <h3>In scope</h3>
     <ul>
       <li>3-step setup with file preview before you commit to anything</li>
       <li>You can add or remove reference docs at any point, not just at setup: header, chat, a card in the workspace, wherever's convenient</li>
@@ -98,7 +98,7 @@ guessing. Export produces a real .doc file with the current state of the chart.<
     </ul>
   </div>
   <div>
-    <h3>What I deliberately left out</h3>
+    <h3>Out of scope</h3>
     <ul>
       <li>No real LLM call. Responses are scripted/deterministic so the demo is reproducible</li>
       <li>No real file parsing. Local upload sits in the UI but is inert, and says so, rather than pretending to work</li>
@@ -110,7 +110,7 @@ guessing. Export produces a real .doc file with the current state of the chart.<
   </div>
 </div>
 
-<h2>Why I made the calls I made</h2>
+<h2>Key Decisions</h2>
 
 <div class="decision">
   <p class="label">Scoping every request to one row instead of the whole chart</p>
@@ -145,7 +145,7 @@ guessing. Export produces a real .doc file with the current state of the chart.<
   have to keep filtering correctly.</p>
 </div>
 
-<h2>How I'd know it's working</h2>
+<h2>Acceptance Criteria</h2>
 <ul>
   <li>Given a weak row, if you ask to strengthen it and there's nothing uploaded that could help, the AI has to ask for a source, not invent one.</li>
   <li>An AI proposal never touches the chart until you explicitly accept or confirm an edit. Reject leaves it untouched and asks what's wrong.</li>
@@ -154,7 +154,7 @@ guessing. Export produces a real .doc file with the current state of the chart.<
   <li>The chart updates in place after every accepted change. No reload, no losing your spot.</li>
 </ul>
 
-<h2>How I'd measure it if this were real</h2>
+<h2>Success Metrics</h2>
 <ul>
   <li>Time to get a weak row to strong via chat, compared to doing it by hand. This is the whole pitch, so it should show up here.</li>
   <li>Accept/modify rate on AI proposals. If people are rejecting outright a lot, the suggestions aren't good enough yet.</li>
@@ -162,7 +162,7 @@ guessing. Export produces a real .doc file with the current state of the chart.<
   <li>Undo rate. If it's high, the accept step isn't doing its job as a real checkpoint.</li>
 </ul>
 
-<h2>Assumptions and things I'd want to double check</h2>
+<h2>Assumptions</h2>
 <p class="note">Written under a 24-hour window with no ability to ask clarifying questions, so a few of these are
 guesses I'd want to validate with a real analyst before building further:</p>
 <ul>
